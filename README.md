@@ -6,30 +6,31 @@ get_weather_forecaset_by_cities <- function(city_names) {
   for (city_name in city_names) {
     # Forecast API URL
     forecast_url <- "https://api.openweathermap.org/data/2.5/forecast"
+    your_api_key <- "55bcac687734ea585703e90e7dcf8e7e"
     # Create query parameters
-    forecast_query <- list(q = city_name, appid = "55bcac687734ea585703e90e7dcf8e7e", units = "metric")
+    forecast_query <- list(q = city_name, appid = your_api_key, units = "metric")
     # Make HTTP GET call for the given city
     forecast_response <- GET(forecast_url, query = forecast_query)
     # Note that the 5-day forecast JSON result is a list of lists. You can print the response to check the results
     forecast_json_list <- content(forecast_response, as = "parsed")
 
-    # Loop the json result
-    for(result in results) {
-      city <- c(city, result$city_name)
-      weather <- c(weather, result$weather[[1]]$main)
+    # Loop through the JSON result
+    for (result in forecast_json_list$list) {
+      city <- c(city, city_name)
+      weather <- c(weather, result$weather[[1]]$main) 
       visibility <- c(visibility, result$visibility)
       temp <- c(temp, result$main$temp)
       temp_min <- c(temp_min, result$main$temp_min)
-      temp_max <- c(temp_max, result$main$temp_max)
-      pressure <- c(pressure, result$main$pressure)
-      humidity <- c(humidity, result$main$humidity)
-      wind_speed <- c(wind_speed, result$wind$speed)
-      wind_deg <- c(wind_deg, result$wind$deg)
-      forecast_datetime <- c(forecast_datetime, result$dt_text)
+      temp_max <- c(temp_max, result$main$temp_max) 
+      pressure <- c(pressure, result$main$pressure) 
+      humidity <- c(humidity, result$main$humidity) 
+      wind_speed <- c(wind_speed, result$wind$speed) 
+      wind_deg <- c(wind_deg, result$wind$deg) 
+      forecast_datetime <- c(forecast_datetime, result$dt_txt) 
       season <- c(season, "winter")
     }
-      
-    # Add the R Lists into a data frame
+
+    # Add the R lists into a data frame
     df <- data.frame(
       city = city, 
       weather = weather,
@@ -41,10 +42,11 @@ get_weather_forecaset_by_cities <- function(city_names) {
       humidity = humidity,
       wind_speed = wind_speed,
       wind_deg = wind_deg,
-      forecast_datetime,
-        season=season)
-  }
+      forecast_datetime = forecast_datetime,
+      season = season
+    )
+    
 
-  # Return a data frame
+  # Return the data frame
   return(df)
 }
